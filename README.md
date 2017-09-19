@@ -1,24 +1,29 @@
-# README
+# Street Trees API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Demonstration API building in progress...
 
-Things you may want to cover:
+Included so far:
 
-* Ruby version
+* Rakefile to convert csv of Portland trees to database
 
-* System dependencies
+* API versioning and namespacing
 
-* Configuration
+* Serialization of tree data with Active Model Serializers
 
-* Database creation
+* Basic Kaminari implementation
 
-* Database initialization
+To dos:
 
-* How to run the test suite
+* Scopes and search functionality (by neighborhood, edible, etc)
 
-* Services (job queues, cache servers, search engines, etc.)
+* Build out pagination further
 
-* Deployment instructions
+* Add throttling
 
-* ...
+* Testing with request specs
+
+* Authentication
+
+* Document with Swagger
+
+* Add indexing to database
