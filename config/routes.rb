@@ -1,3 +1,7 @@
 Rails.application.routes.draw do
-  resources :trees
+  scope module: 'api' do
+    namespace :v1 do
+      resources :trees
+    end
+  end
 end
