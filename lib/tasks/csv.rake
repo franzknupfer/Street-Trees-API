@@ -5,7 +5,9 @@ namespace :csv do
 
     CSV.foreach('../street_trees.csv', :headers => true) do |row|
       t = Tree.new()
-      t.lat = row['X']
+      # Task is not properly picking up value at row['X'].
+      # t.lat = row['X']
+      t.lat = row[0]
       t.long = row['Y']
       t.objectid = row['OBJECTID']
       t.survey_date = row['Date_Inventoried']
