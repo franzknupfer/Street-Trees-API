@@ -27,35 +27,14 @@ class Tree < ApplicationRecord
   end
 
   def self.dynamic_scope(params)
-    scope_hash = {}
+    string = ""
     params.each do |key, value|
       if Tree.column_names.include?(key)
-        scope_hash[key] = value
+        string = string + ".where('lower(#{key}) like ?', ('#{value}').downcase)"
       end
     end
-    if scope_hash.any?
-      string = "Tree"
-      scope_hash.each do |k, v|
-        if v.class == String
-          string = string + ".where('lower(#{k}) like ?', ('#{v}').downcase)"
-        else
-          string = string + ".where('(#{k}) like ?', ('#{v})')"
-        end
-      end
+    if string != ""
+      eval("Tree" + string)
     end
-    binding.pry
-    eval(string)
   end
-
-  # def self.scope_by_params(params)
-  #   if params[:neighborhood]
-  #     query = search_by_neighborhood(params[:neighborhood])
-  #   end
-  #   if params[:common_name]
-  #
-  #
-  #
-  # def self.send_chain(methods)
-  #   methods.inject(self, :send)
-  # end
 end
