@@ -6,12 +6,35 @@
 // * Nicer map layer
 // * Add search options beyond neighborhood and type?
 
+class Tree {
+  constructor() {}
+
+  setProperties(data) {
+    Object.keys(data).forEach((key) => {
+      this[key] = data[key];
+    });
+  }
+}
+
+function processQueryResults(data) {
+  data = JSON.parse(data);
+  results_array = [];
+  data.trees.forEach(function(treeProps) {
+    let object = new Tree();
+    object.setProperties(treeProps);
+    results_array.push(object);
+  });
+  return results_array;
+}
 
 function treeApiCall(neighborhood, common_name) {
   return new Promise(function(resolve, reject) {
     let request = new XMLHttpRequest();
-    let url = `http://localhost:3000/v1/trees?neighborhood=${neighborhood}&common_name=${common_name}`;
-
+    let url = `http://localhost:3000/v1/trees?neighborhood=${neighborhood}`;
+    console.log(common_name);
+    if (common_name !== "") {
+      url = url + `&common_name=${common_name}`;
+    }
     request.onload = function() {
       if (this.status === 200) {
         resolve(request.response);
@@ -36,15 +59,39 @@ function initMap(data) {
 function placeMarkers(data, map) {
   data = JSON.parse(data)
   data.trees.forEach(function(tree) {
-    addMarker(parseFloat(tree.lat), parseFloat(tree.long), map);
+    addMarker(tree, map);
   });
 }
 
-function addMarker(lat, long, map) {
+function addMarker(data, map) {
+  const image = "public/green-icon.png";
   let marker = new google.maps.Marker({
-    position: new google.maps.LatLng(lat, long)
+    position: new google.maps.LatLng(parseFloat(data.lat), parseFloat(data.long)),
+    icon: image
+  });
+  marker.id = data.id;
+  marker.addListener("click", function() {
+    console.log(this.id);
+    showData(this.id);
   });
   marker.setMap(map);
+}
+
+function showData(id) {
+  for (tree of results_array) {
+    if (tree["id"] === id) {
+      displayData(tree);
+      break;
+    }
+  }
+}
+
+function displayData(tree) {
+  $("#tree-info").html(`
+    Common Name: ${tree.common_name}
+    Address: ${tree.address}
+    Edible: ${tree.edible}
+  `);
 }
 
 $(document).ready(function() {
@@ -58,7 +105,9 @@ $(document).ready(function() {
     let common_name = $('#common_name').val();
     $('#location').val("");
     treeApiCall(neighborhood, common_name).then(function(response) {
+      let results = processQueryResults(response);
       initMap(response);
+      return results;
     });
   });
 });
