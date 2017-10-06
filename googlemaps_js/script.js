@@ -30,10 +30,12 @@ function processQueryResults(data) {
 function treeApiCall(neighborhood, common_name) {
   return new Promise(function(resolve, reject) {
     let request = new XMLHttpRequest();
-    let url = `http://localhost:3000/v1/trees?neighborhood=${neighborhood}`;
-    console.log(common_name);
+    let url = `http://localhost:3000/v1/trees?`;
+    if (neighborhood !== "") {
+      url += `neighborhood=${neighborhood}`
+    }
     if (common_name !== "") {
-      url = url + `&common_name=${common_name}`;
+      url += `&common_name=${common_name}`;
     }
     request.onload = function() {
       if (this.status === 200) {
@@ -50,20 +52,22 @@ function treeApiCall(neighborhood, common_name) {
 function initMap(data) {
   let portland = {lat: 45.5231, lng: -122.6765};
   let map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 12,
+    zoom: 15,
     center: portland
   });
   placeMarkers(data, map);
 }
 
 function placeMarkers(data, map) {
-  data = JSON.parse(data)
+  data = JSON.parse(data);
+  let bounds = new google.maps.LatLngBounds();
   data.trees.forEach(function(tree) {
-    addMarker(tree, map);
+    addMarker(tree, map, bounds);
   });
+  map.fitBounds(bounds);
 }
 
-function addMarker(data, map) {
+function addMarker(data, map, bounds) {
   const image = "public/green-icon.png";
   let marker = new google.maps.Marker({
     position: new google.maps.LatLng(parseFloat(data.lat), parseFloat(data.long)),
@@ -71,10 +75,10 @@ function addMarker(data, map) {
   });
   marker.id = data.id;
   marker.addListener("click", function() {
-    console.log(this.id);
     showData(this.id);
   });
   marker.setMap(map);
+  bounds.extend(marker.getPosition());
 }
 
 function showData(id) {
