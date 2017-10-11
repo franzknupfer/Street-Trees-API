@@ -1,5 +1,7 @@
 /* global google */
 import { Tree } from './tree.js'
+import $ from 'jquery'
+import GreenIcon from '../images/green-icon.png'
 
 export class Map {
   constructor (treeData) {
@@ -33,7 +35,7 @@ export class Map {
   }
 
   addMarker (tree) {
-    const image = '../images/green-icon.png'
+    const image = GreenIcon
     let marker = new google.maps.Marker({
       position: new google.maps.LatLng(parseFloat(tree.lat), parseFloat(tree.long)),
       icon: image

@@ -1,4 +1,6 @@
 import { Map } from './map.js'
+import $ from 'jquery'
+import '../css/styles.css'
 
 function treeApiCall (neighborhood, commonName) {
   return new Promise(function (resolve, reject) {
