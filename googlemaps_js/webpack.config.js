@@ -1,42 +1,53 @@
-var path = require('path');
-var webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-var BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './public/js/main.js',
+    entry: './src/js/main.js',
     output: {
-        path: path.resolve(__dirname, 'public/build'),
+        path: path.resolve(__dirname, 'public/dist'),
         filename: 'main.bundle.js'
     },
     devtool: 'inline-source-map',
+    devServer: {
+      contentBase: './dist'
+    },
     module: {
+        rules: [
+          {
+            test: /\.css$/,
+            use: [
+              'style-loader',
+              'css-loader'
+            ]
+          },
+          {
+            test: /\.(png)$/,
+            use: [
+              'file-loader'
+            ]
+          }
+        ],
         loaders: [
             {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['es2015']
-                }
+              test: /\.js$/,
+              loader: 'babel-loader',
+              query: {
+                  presets: ['es2015']
+              }
             }
         ]
     },
     plugins: [
-      new HtmlWebpackPlugin({
-        title: 'Tree Finder'
-      }),
       new CleanWebpackPlugin(['dist']),
-      new BrowserSyncPlugin({
-        // browse to http://localhost:3000/ during development,
-        // ./public directory is being served
-        host: 'localhost',
-        port: 8080,
-        server: { baseDir: ['public'] }
+      new HtmlWebpackPlugin({
+        template: './src/index.template.html',
+        inject: 'body'
       })
     ],
     stats: {
         colors: true
-    },
-    devtool: 'source-map'
+    }
 };
